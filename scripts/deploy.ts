@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+const {ethers} = require("hardhat");
 
 async function main() {
   const EnterpriseToken = await ethers.getContractFactory("EnterpriseToken");
@@ -7,15 +7,15 @@ async function main() {
 
   console.log("token deployed: ", enterpriseToken.name);
 
-  const Crownsale = await ethers.getContractFactory("Crownsale")
-  const crownsale = await Crownsale.deploy(
+  const Crowdsale = await ethers.getContractFactory("EnterpriseCrowdsale")
+  const crowdsale = await Crowdsale.deploy(
     await enterpriseToken.getAddress(), 
       100,
       1000000,
       7
   )
-  await crownsale.waitForDeployment()
-  console.log("crownsale deployed: ", crownsale.token);
+  await crowdsale.waitForDeployment()
+  console.log("crownsale deployed: ", crowdsale.token);
 }
 main().catch((error) => {
   console.error(error);
