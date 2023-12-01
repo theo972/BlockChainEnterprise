@@ -1,22 +1,13 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const MyToken = await ethers.getContractFactory("EnterpriseToken");
+  const myToken = await MyToken.deploy(100000000);
+  await myToken.deploymentTransaction();
 
-  console.log("Deploying EnterpriseToken with the account:", deployer.address);
-
-  const initialSupply = 1000000; // Ajustez l'approvisionnement initial selon vos besoins
-
-  // Déployez le contrat ERC-20
-  const EnterpriseToken = await ethers.getContractFactory("EnterpriseToken");
-  const enterpriseToken = await EnterpriseToken.deploy(1);
-  
-  console.log("EnterpriseToken deployed to:", enterpriseToken.address);
+  console.log("Ocean token deployed: ", myToken.getAddress());
 }
-
-main()
-  .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
