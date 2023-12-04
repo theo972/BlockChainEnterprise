@@ -68,8 +68,7 @@ describe("EnterpriseCrowdsale", function () {
           10000
         );
     
-        await ethers.provider.send("evm_increaseTime", [5000]);
-        await ethers.provider.send("evm_mine", []);
+        await time.increase(5000);
     
         await enterpriseToken.transfer(await crowdsale.getAddress(), 100);
 

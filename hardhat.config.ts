@@ -1,6 +1,9 @@
 import { HardhatUserConfig, task } from "hardhat/config";
 import "dotenv/config"
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-verify";
+
+const sleep = (milliseconds: number | undefined) => new Promise(resolve => setTimeout(resolve, milliseconds));
 
 task("deploy", "deploy contract")
   .addParam("price", "The token price")
@@ -12,7 +15,7 @@ task("deploy", "deploy contract")
     await enterpriseToken.waitForDeployment();
   
     console.log("token deployed: ", enterpriseToken.name);
-    console.log()
+  
     const tokenAddress = await enterpriseToken.getAddress()
     const Crowdsale = await ethers.getContractFactory("EnterpriseCrowdsale")
     const crowdsale = await Crowdsale.deploy(
@@ -24,6 +27,19 @@ task("deploy", "deploy contract")
     await enterpriseToken.transfer(await crowdsale.getAddress(), 50);
     await crowdsale.waitForDeployment()
     console.log("crownsale deployed: ", crowdsale.token);
+
+    const crowdsaleAddress = await crowdsale.getAddress()
+    await sleep(30000);
+  
+    await run("verify:verify", {
+      address: crowdsaleAddress,
+      constructorArguments: [
+        tokenAddress,
+        ethers.parseEther(taskArgs.price),
+        taskArgs.numberOfToken,
+        taskArgs.durationInDay,
+      ],
+    });
   });
 
 const config: HardhatUserConfig = {
