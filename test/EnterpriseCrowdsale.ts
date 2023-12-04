@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 
 describe("EnterpriseCrowdsale", function () {
     it("should allow purchasing tokens", async function () {
@@ -20,10 +21,10 @@ describe("EnterpriseCrowdsale", function () {
         await enterpriseToken.transfer(await enterpriseCrowdsale.getAddress(), 100);
 
         await owner.sendTransaction({ to: otherAccount.address, value: ethers.parseEther("1000") });
-        await enterpriseCrowdsale.connect(otherAccount).purchaseTokens(1, { value: ethers.parseEther("2") });
+        await enterpriseCrowdsale.connect(otherAccount).purchaseTokens({ value: 2 });
         const buyerBalance = await enterpriseToken.balanceOf(otherAccount.address);
 
-        expect(buyerBalance).to.equal(1);
+        expect(buyerBalance).to.equal(2);
     });
 
     it("should not allow purchasing tokens if not enough tokens available", async function () {
@@ -46,7 +47,7 @@ describe("EnterpriseCrowdsale", function () {
         await owner.sendTransaction({ to: otherAccount.address, value: ethers.parseEther("1000") });
 
         await expect(
-            enterpriseCrowdsale.connect(otherAccount).purchaseTokens(400, { value: ethers.parseEther("200") })
+            enterpriseCrowdsale.connect(otherAccount).purchaseTokens({ value: 200 })
         ).to.be.revertedWith('Not enough tokens available');   
 
         const buyerBalance = await enterpriseToken.balanceOf(otherAccount.address);
@@ -73,10 +74,10 @@ describe("EnterpriseCrowdsale", function () {
         await enterpriseToken.transfer(await crowdsale.getAddress(), 100);
 
         await owner.sendTransaction({ to: otherAccount.address, value: ethers.parseEther("1000") });
-        await crowdsale.connect(otherAccount).purchaseTokens(10, { value: ethers.parseEther("200") });
+        await crowdsale.connect(otherAccount).purchaseTokens({ value: 100 });
     
         const buyerBalance = await enterpriseToken.balanceOf(otherAccount.address);
-        expect(buyerBalance).to.equal(10);
+        expect(buyerBalance).to.equal(100);
       });
     
       it("should not allow purchasing tokens after the sale has ended", async function () {
@@ -90,17 +91,13 @@ describe("EnterpriseCrowdsale", function () {
           await enterpriseToken.getAddress(),
           1,
           100,
-          1000
+          1
         );
         await enterpriseToken.transfer(await crowdsale.getAddress(), 100);
-    
-        await ethers.provider.send("evm_increaseTime", [1000]);
-        await ethers.provider.send("evm_mine", []);
+        await time.increase(100000);
     
         await expect(
-          crowdsale.connect(otherAccount).purchaseTokens(5, { value: ethers.parseEther("200") })
+          crowdsale.connect(otherAccount).purchaseTokens({ value: 100 })
         ).to.be.revertedWith("Sale has ended");
     });
-    
-    
 });
