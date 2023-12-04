@@ -10,7 +10,7 @@ async function main() {
   const Crowdsale = await ethers.getContractFactory("EnterpriseCrowdsale")
   const crowdsale = await Crowdsale.deploy(
     await enterpriseToken.getAddress(), 
-      ethers.parseEther("0.1"),
+      ethers.parseEther("0.1000"),
       50,
       7
   )
