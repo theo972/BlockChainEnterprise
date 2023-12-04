@@ -3,8 +3,6 @@ import "dotenv/config"
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-verify";
 
-const sleep = (milliseconds: number | undefined) => new Promise(resolve => setTimeout(resolve, milliseconds));
-
 task("deploy", "deploy contract")
   .addParam("price", "The token price")
   .addParam("numberOfToken", "The number of token deploy")
@@ -24,12 +22,12 @@ task("deploy", "deploy contract")
         taskArgs.numberOfToken,
         taskArgs.durationInDay
     )
-    await enterpriseToken.transfer(await crowdsale.getAddress(), 50);
+    await enterpriseToken.transfer(await crowdsale.getAddress(), taskArgs.numberOfToken);
     await crowdsale.waitForDeployment()
     console.log("crownsale deployed: ", crowdsale.token);
 
     const crowdsaleAddress = await crowdsale.getAddress()
-    await sleep(30000);
+    await new Promise(resolve => setTimeout(resolve, 10000));
   
     await run("verify:verify", {
       address: crowdsaleAddress,
