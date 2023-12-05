@@ -148,22 +148,22 @@ describe("EnterpriseCrowdsale", function () {
         expect(ownerBalance).to.be.gte(0);
     });
 
-    // it("should reclaim ether after the sale if not owner", async function () {
-    //     const [owner, otherAccount] = await ethers.getSigners();
-    //     const EnterpriseToken = await ethers.getContractFactory("EnterpriseToken");
-    //     const enterpriseToken = await EnterpriseToken.deploy(100);
+    it("should reclaim ether after the sale if not owner", async function () {
+        const [owner, otherAccount] = await ethers.getSigners();
+        const EnterpriseToken = await ethers.getContractFactory("EnterpriseToken");
+        const enterpriseToken = await EnterpriseToken.deploy(100);
     
-    //     const Crowdsale = await ethers.getContractFactory("EnterpriseCrowdsale");
-    //     const crowdsale = await Crowdsale.deploy(
-    //         await enterpriseToken.getAddress(),
-    //         1,
-    //         100,
-    //         1
-    //     );
-    //     await time.increase(100000);
+        const Crowdsale = await ethers.getContractFactory("EnterpriseCrowdsale");
+        const crowdsale = await Crowdsale.deploy(
+            await enterpriseToken.getAddress(),
+            1,
+            100,
+            1
+        );
+        await time.increase(100000);
           
-    //     await expect(
-    //         await crowdsale.connect(otherAccount).reclaimEther()
-    //       ).to.be.revertedWith('Ownable: caller is not the owner');
-    // });
+        await expect(
+            crowdsale.connect(otherAccount).reclaimEther()
+          ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
 });

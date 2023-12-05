@@ -27,7 +27,7 @@ task("deploy", "deploy contract")
     console.log("crownsale deployed: ", crowdsale.token);
 
     const crowdsaleAddress = await crowdsale.getAddress()
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 60000));
   
     await run("verify:verify", {
       address: crowdsaleAddress,
